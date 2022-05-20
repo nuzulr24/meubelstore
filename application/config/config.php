@@ -450,11 +450,11 @@ $config['global_xss_filtering'] = TRUE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = TRUE;
+$config['csrf_protection'] = false;
 $config['csrf_token_name'] = 'mustbeel';
 $config['csrf_cookie_name'] = '234zone';
 $config['csrf_expire'] = 7200;
-$config['csrf_regenerate'] = TRUE;
+$config['csrf_regenerate'] = false;
 $config['csrf_exclude_uris'] = array(
     "mobileapi/[0-9]+",
     "mobileapi/[a-z]+",

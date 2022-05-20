@@ -1,0 +1,22 @@
+LOGIN OWNER & ADMIN
+Localhost/meuebel-store ATAU namadomain.com/meuebel-store
+
+Owner (AKSES SEPENUHNYA)
+Username: owner
+Password: owner
+
+Admin (AKSES FITUR ADMIN)
+Username: admin
+Password: admin
+
+
+LOGIN PELANGGAN
+Localhost/home/signin ATAU namadomain.com/home/signin
+
+Pelanggan (AKSES FITUR MEMBER)
+Email: pelanggan@gmail.com
+Password: pelanggan
+
+
+CATATAN:
+- Semua fitur sudah aman

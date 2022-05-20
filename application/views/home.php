@@ -14,7 +14,7 @@
 		?>
 			<div class="slider-item" style="cursor:pointer;" data-onclick="<?=$s->link?>">
 				<div class="wrap">
-					<img src="<?= base_url('blackexpo/promo/'.$s->gambar) ?>" />
+					<img src="<?= base_url('sso/promo/'.$s->gambar) ?>" />
 				</div>
 			</div>
 		<?php
@@ -38,7 +38,7 @@
 				foreach($db->result() as $r){
 			?>
 				<div class="cat-item">
-					<div class="cat-bg" style="background-position:center center;background-image:url('<?=base_url("blackexpo/kategori/".$r->icon)?>');background-size:cover;" onclick="window.location.href='<?=site_url("kategori/".$r->url)?>'">
+					<div class="cat-bg" style="background-position:center center;background-image:url('<?=base_url("sso/kategori/".$r->icon)?>');background-size:cover;" onclick="window.location.href='<?=site_url("kategori/".$r->url)?>'">
 					</div>
 					<div class="cat-nama"><?=$r->nama?></div>
 				</div>
@@ -75,7 +75,7 @@
 				?>
 					<div class="col-md-4 iklans m-b-20">
 						<a href="<?=$iklan->link?>">
-							<img src="<?= base_url('blackexpo/promo/'.$iklan->gambar) ?>" />
+							<img src="<?= base_url('sso/promo/'.$iklan->gambar) ?>" />
 						</a>
 					</div>
 				<?php
@@ -214,7 +214,7 @@
 						<div class="m-b-20 testimoni-komentar">" <?=$r->komentar?> "</div>
 						<div class="row m-lr-0">
 							<div class="col-3 p-lr-0">
-								<div class="testimoni-img" style="background-position:center center;background-image:url('<?=base_url("blackexpo/uploads/".$r->foto)?>');background-size:cover;"></div>
+								<div class="testimoni-img" style="background-position:center center;background-image:url('<?=base_url("sso/uploads/".$r->foto)?>');background-size:cover;"></div>
 							</div>
 							<div class="col-9 p-r-4">
 								<div class="font-bold text-primary fs-14 ellipsis"><?=$r->nama?></div>
@@ -250,7 +250,7 @@
 				<div class="col-md-6 blog-wrap">
 					<div class="blog row" onclick="window.location.href='<?=site_url('blog/'.$res->url)?>'">
 						<div class="col-4 p-l-0 p-r-0">
-							<div class="img" style="background-image: url('<?=base_url("blackexpo/uploads/".$res->img)?>')"></div>
+							<div class="img" style="background-image: url('<?=base_url("sso/uploads/".$res->img)?>')"></div>
 						</div>
 						<div class="col-8">
 							<div class="titel">
@@ -286,7 +286,7 @@
 
 	<?php $notif_booster = $this->func->getSetting("notif_booster"); if($notif_booster == 1){ ?>
 	<div id="toaster" class="toaster row col-md-4" style="display:none;">
-		<div class="col-3 img p-lr-6"><img id="toast-foto" src="<?=base_url("blackexpo/uploads/520200116140232.jpg")?>" /></div>
+		<div class="col-3 img p-lr-6"><img id="toast-foto" src="<?=base_url("sso/uploads/520200116140232.jpg")?>" /></div>
 		<div class="col-9 p-lr-6">
 			<b id="toast-user">USER</b> telah membeli<br/>
 			<b id="toast-produk">Nama Produknya</b>

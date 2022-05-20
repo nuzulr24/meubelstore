@@ -2161,6 +2161,13 @@ class Assync extends CI_Controller {
 			redirect("404_notfound");
 		}
 	}
+
+	private function strip_tags_content($text) {
+
+		return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
+		
+	}
+
 	private function reqOngkir($dari,$berat,$tujuan,$kurir,$services){
 			$usrid = (isset($_SESSION["usrid"])) ? $_SESSION["usrid"] : 0;
 
@@ -2204,7 +2211,7 @@ class Assync extends CI_Controller {
 				'origin' => $dari,
 				'originType' => 'city',
 				'destination' => $tujuan,
-				'destinationType' => 'city',
+				'destinationType' => 'subdistrict',
 				'weight' => $berat,
 				'courier' => $kurir
 			),
@@ -2214,108 +2221,106 @@ class Assync extends CI_Controller {
 			$err = curl_error($curl);
 			curl_close($curl);
 
-			print_r('hasil => ', json_encode($response));
+		if ($err) {
+			echo "cURL Error #:" . $err;
+		} else {
+			$arr = json_decode($response);
+			//print_r($response);
+			//exit;
+			//print_r($arr->rajaongkir->results[0]->costs[0]->cost[0]->value);
+			$hasil = array("success"=>false,"response"=>"daerah tidak terjangkau!","harga"=>0,"token"=> $this->security->get_csrf_hash());
 
-				// if ($err) {
-				//   echo "cURL Error #:" . $err;
-				// } else {
-				// 	$arr = json_decode($response);
-				// 	//print_r($response);
-				// 	//exit;
-				// 	//print_r($arr->rajaongkir->results[0]->costs[0]->cost[0]->value);
-				// 	$hasil = array("success"=>false,"response"=>"daerah tidak terjangkau!","harga"=>0,"token"=> $this->security->get_csrf_hash());
+			if($arr->rajaongkir->status->code == "200"){
+				$hasil = array("success"=>false,"response"=>"daerah tidak terjangkau!","message"=>"service code tidak ada data","harga"=>0,"token"=> $this->security->get_csrf_hash());
+				for($i=0; $i<count($arr->rajaongkir->results[0]->costs); $i++){
+					$harga = $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value / $beratkg;
+					$service = $arr->rajaongkir->results[0]->costs[$i]->service;
+					$array = array(
+						"dari"		=> $dari,
+						"tujuan"	=> $tujuan,
+						"kurir"		=> $kurir,
+						"service"	=> $service,
+						"harga"		=> $harga,
+						"update"	=> date("Y-m-d H:i:s"),
+						"usrid"		=> $usrid
+					);
+					//print_r(json_encode($array)."<p/>");
+					$idhistory = $this->func->getHistoryOngkir(array("dari"=>$dari,"tujuan"=>$tujuan,"kurir"=>$kurir,"service"=>$service),"id");
+					if($idhistory > 0){
+						$this->db->where("id",$idhistory);
+						$this->db->update("historyongkir",$array);
+					}else{
+						if($harga > 0){ $this->db->insert("historyongkir",$array); }
+					}
 
-				// 	if($arr->rajaongkir->status->code == "200"){
-				// 		$hasil = array("success"=>false,"response"=>"daerah tidak terjangkau!","message"=>"service code tidak ada data","harga"=>0,"token"=> $this->security->get_csrf_hash());
-				// 		for($i=0; $i<count($arr->rajaongkir->results[0]->costs); $i++){
-				// 			$harga = $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value / $beratkg;
-				// 			$service = $arr->rajaongkir->results[0]->costs[$i]->service;
-				// 			$array = array(
-				// 				"dari"		=> $dari,
-				// 				"tujuan"	=> $tujuan,
-				// 				"kurir"		=> $kurir,
-				// 				"service"	=> $service,
-				// 				"harga"		=> $harga,
-				// 				"update"	=> date("Y-m-d H:i:s"),
-				// 				"usrid"		=> $usrid
-				// 			);
-				// 			//print_r(json_encode($array)."<p/>");
-				// 			$idhistory = $this->func->getHistoryOngkir(array("dari"=>$dari,"tujuan"=>$tujuan,"kurir"=>$kurir,"service"=>$service),"id");
-				// 			if($idhistory > 0){
-				// 				$this->db->where("id",$idhistory);
-				// 				$this->db->update("historyongkir",$array);
-				// 			}else{
-				// 				if($harga > 0){ $this->db->insert("historyongkir",$array); }
-				// 			}
-
-				// 			if($services != ""){
-				// 				if($service == $services){
-				// 					$hasil = array(
-				// 						"success"	=> true,
-				// 						"dari"		=> $dari,
-				// 						"tujuan"	=> $tujuan,
-				// 						"kurir"		=> $kurir,
-				// 						"service"	=> $service,
-				// 						"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
-				// 						"update"	=> date("Y-m-d H:i:s"),
-				// 						"hargaperkg"=> $harga,
-				// 						"token"=> $this->security->get_csrf_hash()
-				// 					);
-				// 				}else{
-				// 					if($kurir == "jne"){
-				// 						if($services == "REG"){
-				// 							$servicev = "CTC";
-				// 							if(strcasecmp($service,$servicev) == 0){
-				// 								$hasil = array(
-				// 									"success"	=> true,
-				// 									"dari"		=> $dari,
-				// 									"tujuan"	=> $tujuan,
-				// 									"kurir"		=> $kurir,
-				// 									"service"	=> $service,
-				// 									"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
-				// 									"update"	=> date("Y-m-d H:i:s"),
-				// 									"hargaperkg"=> $harga,
-				// 									"token"=> $this->security->get_csrf_hash()
-				// 								);
-				// 							}
-				// 						}elseif($services == "YES"){
-				// 							$servicev = "CTCYES";
-				// 							if(strcasecmp($service,$servicev) == 0){
-				// 								$hasil = array(
-				// 									"success"	=> true,
-				// 									"dari"		=> $dari,
-				// 									"tujuan"	=> $tujuan,
-				// 									"kurir"		=> $kurir,
-				// 									"service"	=> $service,
-				// 									"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
-				// 									"update"	=> date("Y-m-d H:i:s"),
-				// 									"hargaperkg"=> $harga,
-				// 									"token"=> $this->security->get_csrf_hash()
-				// 								);
-				// 							}
-				// 						}else{
-											
-				// 						}
-				// 					}
-				// 				}
-				// 			}else{
-				// 				$hasil[] = array(
-				// 					"success"	=> true,
-				// 					"dari"		=> $dari,
-				// 					"tujuan"	=> $tujuan,
-				// 					"kurir"		=> $kurir,
-				// 					"service"	=> $arr->rajaongkir->results[0]->costs[$i]->service,
-				// 					"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
-				// 					"update"	=> date("Y-m-d H:i:s"),
-				// 					"hargaperkg"=> $harga,
-				// 					"token"		=> $this->security->get_csrf_hash()
-				// 				);
-				// 			}
-				// 		}
-				// 	}
-				// 	//echo "dari: ".$dari.", tujuan: ".$tujuan.", berat: ".$berat.", kurir: ".$kurir."<br/>&nbsp;<br/>";
-				// 	echo json_encode($hasil);
-				// }
+					if($services != ""){
+						if($service == $services){
+							$hasil = array(
+								"success"	=> true,
+								"dari"		=> $dari,
+								"tujuan"	=> $tujuan,
+								"kurir"		=> $kurir,
+								"service"	=> $service,
+								"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
+								"update"	=> date("Y-m-d H:i:s"),
+								"hargaperkg"=> $harga,
+								"token"=> $this->security->get_csrf_hash()
+							);
+						}else{
+							if($kurir == "jne"){
+								if($services == "REG"){
+									$servicev = "CTC";
+									if(strcasecmp($service,$servicev) == 0){
+										$hasil = array(
+											"success"	=> true,
+											"dari"		=> $dari,
+											"tujuan"	=> $tujuan,
+											"kurir"		=> $kurir,
+											"service"	=> $service,
+											"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
+											"update"	=> date("Y-m-d H:i:s"),
+											"hargaperkg"=> $harga,
+											"token"=> $this->security->get_csrf_hash()
+										);
+									}
+								}elseif($services == "YES"){
+									$servicev = "CTCYES";
+									if(strcasecmp($service,$servicev) == 0){
+										$hasil = array(
+											"success"	=> true,
+											"dari"		=> $dari,
+											"tujuan"	=> $tujuan,
+											"kurir"		=> $kurir,
+											"service"	=> $service,
+											"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
+											"update"	=> date("Y-m-d H:i:s"),
+											"hargaperkg"=> $harga,
+											"token"=> $this->security->get_csrf_hash()
+										);
+									}
+								}else{
+									
+								}
+							}
+						}
+					}else{
+						$hasil[] = array(
+							"success"	=> true,
+							"dari"		=> $dari,
+							"tujuan"	=> $tujuan,
+							"kurir"		=> $kurir,
+							"service"	=> $arr->rajaongkir->results[0]->costs[$i]->service,
+							"harga"		=> $arr->rajaongkir->results[0]->costs[$i]->cost[0]->value,
+							"update"	=> date("Y-m-d H:i:s"),
+							"hargaperkg"=> $harga,
+							"token"		=> $this->security->get_csrf_hash()
+						);
+					}
+				}
+			}
+			//echo "dari: ".$dari.", tujuan: ".$tujuan.", berat: ".$berat.", kurir: ".$kurir."<br/>&nbsp;<br/>";
+			echo json_encode($hasil);
+		}
 	}
 	function cekapiongkir(){
 		$dari = (isset($_POST["dari"])) ? $_POST["dari"] : 0;

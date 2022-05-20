@@ -99,7 +99,7 @@
 						$kurir = explode("|",$set->kurir);
 						for($i=0; $i<count($kurir); $i++){
 							$kur = $this->func->getKurir($kurir[$i],"halaman");
-							echo '<img style="width:28%;margin:2%;" src="'.base_url("blackexpo/assets/img/kurir/".$kur.".png").'" />';
+							echo '<img style="width:28%;margin:2%;" src="'.base_url("sso/assets/img/kurir/".$kur.".png").'" />';
 						}
 					?>
 				</div>
@@ -109,7 +109,6 @@
 		<div class="t-center p-l-15 p-r-15">
 			<div class="t-center p-t-20">
 				Copyright © <?=date('Y');?> <?=ucwords(strtolower($set->nama))?>
-				<?php if($this->func->demo() == true){ ?> | Made with <i class="fas fa-heart text-danger"></i> by MC Project</a><?php } ?>
 			</div>
 		</div>
 	</footer>
@@ -126,87 +125,11 @@
 	<input type="hidden" id="tokens" value="<?=$this->security->get_csrf_hash();?>" />
 
 	<?php if($this->func->cekLogin() == true){ ?>
-	<script type="text/javascript">
-		$(function(){
-			//$("#modalpesan").modal();
-			$("#modalpilihpesan,#modalpesan").on('shown.bs.modal', function(){
-				$(".chat-sticky").hide();
-			});
-			$("#modalpilihpesan,#modalpesan").on('hidden.bs.modal', function(){
-				$(".chat-sticky").show();
-			});
-			$("#modalpesan").on('shown.bs.modal', function(){
-				fbq("track","Contact");
-				loadPesan(0);
-				var seti = setInterval(()=>{ loadPesan(1); },3000);
-				$("#modalpesan").on('hidden.bs.modal', function(){
-					clearInterval(seti);
-				});
-			});
-			
-			$("#kirimpesan").on("submit",function(e){
-				e.preventDefault();
-				var datar = $(this).serialize();
-				datar = datar + "&" + $("#names").val() + "=" + $("#tokens").val();
-				$.post("<?=site_url("assync/kirimpesan")?>",datar,function(s){
-					fbq("track","Contact");
-					var data = eval("("+s+")");
-					updateToken(data.token);
-					$("#kirimpesan input").val("");
-					if(data.success == true){
-						$("#pesan").html('<div class="isipesan"><i class="fas fa-spin fa-compact-disc text-success"></i> memuat pesan...</div>');
-						loadPesan(0);
-					}else{
-						swal.fire("GAGAL!","terjadi kendala saat mengirim pesan, coba ulangi beberapa saat lagi","error");
-					}
-				});
-			});
-			
-			//$("#modalpilihpesan").modal();
-			
-			function loadPesan(nul){
-				$("#pesan").load("<?=site_url("assync/pesanmasuk")?>",function(){
-					if(nul != 1){
-						$("#pesan").animate({ scrollTop: $("#pesan").prop('scrollHeight')}, 1000);
-					}
-				});
-			}
-
-		});
-	</script>
-	<div class="modal fade" id="modalpesan" tabindex="-1" role="dialog" style="background: rgba(0,0,0,.5);" style="bottom:0;right:0;" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title text-primary font-medium"><i class="fa fa-comments"></i> Chat</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body pesan" id="pesan">
-					<div class="pesanwrap center">
-						<div class="isipesan"><i class="fas fa-spin fa-compact-disc text-success"></i> memuat pesan...</div>
-					</div>
-				</div>
-				<form id="kirimpesan" method="POST">
-					<div class="modal-footer">
-						<div class="input-group">
-							<input type="text" class="form-control" placeholder="ketik pesan..." name="isipesan" required />
-							<div class="input-group-append">
-								<button type="submit" id="submit" class="btn btn-success"><i class="fa fa-paper-plane"></i> KIRIM</button>
-							</div>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
 	<div class="modal fade" id="modalpilihpesan" tabindex="-1" role="dialog" style="background: rgba(0,0,0,.5);" style="bottom:0;right:0;" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content p-lr-30 p-tb-40 text-center">
 				<h3 class="text-primary font-bold">Hubungi Admin</h3><br/>
 				<a href="https://wa.me/<?=$this->func->getRandomWasap()?>" target="_blank" class="btn btn-lg btn-block btn-success m-b-10"><i class="fab fa-whatsapp"></i> &nbsp;Hubungi via Whatsapp</a>
-				<button onclick="$('#modalpilihpesan').modal('hide');$('#modalpesan').modal()" class="btn btn-lg btn-block btn-primary"><i class="fas fa-comments"></i> &nbsp;Chat</button>
 			</div>
 		</div>
 	</div>
@@ -215,44 +138,6 @@
 	<a href="https://wa.me/<?=$this->func->getRandomWasap()?>" class="chat-sticky" target="_blank"><i class="fas fa-comment-dots"></i> Chat</a>
 	<?php }?>
 	
-	<?php
-		if($this->func->demo() == true AND !isset($_SESSION["demo"])){
-	?>
-	<div class="modal fade" id="modaldisclaimer" tabindex="-1" role="dialog" style="background: rgba(0,0,0,.5);" style="bottom:0;right:0;" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title text-danger font-medium"><i class="fa fa-exclamation-triangle"></i> &nbsp;Pemberitahuan Penting!</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="p-all-28 text-center">
-						Website ini adalah versi demo untuk aplikasi Toko Online by <b class="text-info">MC Project</b>.<br/>
-						Apabila berminat dapat langsung menghubungi pembuat aplikasi ini melalui whatsapp, apabila Anda membeli aplikasi ini melalui pihak lain selain pada kontak yang tertera, maka 
-						apabila ada kendala atau kerugian material yg lain bukan tanggungjawab kami selaku pengembang aplikasi.<br/>&nbsp;<br/>
-						<b class="text-success">Beli Langsung Klik Dibawah</b><br/>
-						<a href="https://wa.me/6282377823390" target="_blank" class="btn btn-success m-t-10"><i class="fab fa-whatsapp"></i> Hubungi Pengembang</a><br/>
-						<small>atau</small><br/>
-						<b class="text-success fs-20 font-medium">082377823390&nbsp;</b>
-						<br/>&nbsp;<br/>
-						<i>hargailah jerih payah pengembang aplikasi dengan <b class="text-danger">tidak menggunakan aplikasi ilegal&nbsp;</b></i>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script type="text/javascript">
-		$(function(){
-			$("#modaldisclaimer").modal();
-		});
-	</script>
-	<?php
-			$this->session->set_userdata("demo",true);
-		}
-	?>
-
 	<script type="text/javascript" src="<?= base_url('assets/js/bootstrap.min.js') ?>"></script>
 	<script type="text/javascript" src="<?= base_url('assets/vendor/select2/select2.min.js') ?>"></script>
 	<script type="text/javascript">

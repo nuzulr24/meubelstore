@@ -44,7 +44,7 @@
 			?>
 				<div class="col-6 col-md-3 blog-wrap">
 					<div class="blog-grid" onclick="window.location.href='<?=site_url('blog/'.$res->url)?>'">
-						<div class="img" style="background-image: url('<?=base_url("blackexpo/uploads/".$res->img)?>')"></div>
+						<div class="img" style="background-image: url('<?=base_url("sso/uploads/".$res->img)?>')"></div>
 						<div class="m-t-10 titel">
 							<?=$this->func->potong($res->judul,40,"...")?>
 						</div>

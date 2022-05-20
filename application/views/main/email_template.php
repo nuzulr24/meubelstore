@@ -1,7 +1,7 @@
 <div style="background:#f2f2f2;font-family:arial,sans-serif;">
   <div style="width:90%;max-width:600px;margin:auto;padding:20px 0 50px 0;box-sizing:border-box;">
     <div style="background:#1abc9c;padding:12px;text-align:center;width:100%;border-radius:8px 8px 0 0;box-sizing:border-box;">
-      <img style="width:30%;" src="<?php echo base_url("blackexpo/assets/img/".$this->func->globalset("logo")); ?>" />
+      <img style="width:30%;" src="<?php echo base_url("sso/assets/img/".$this->func->globalset("logo")); ?>" />
     </div>
     <div style="padding:20px;background:#fff;border:1px solid #e8e8e8;width:100%;box-sizing:border-box;">
       <?php echo $content; ?>

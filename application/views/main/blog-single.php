@@ -33,7 +33,7 @@
 		}
 	</style>
 	<div class="container p-t-10 p-b-40">
-		<div class="m-t-30 blog-header m-b-40" style="background-image: url('<?=base_url("blackexpo/uploads/".$res->img)?>');"></div>
+		<div class="m-t-30 blog-header m-b-40" style="background-image: url('<?=base_url("sso/uploads/".$res->img)?>');"></div>
 		<div class="m-b-10">
 			<h3><b><?=$res->judul?></b></h3>
 		</div>
